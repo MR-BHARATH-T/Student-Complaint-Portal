@@ -1,12 +1,13 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HeaderComponent } from './shared/header/header';
+import { FooterComponent } from './shared/footer/footer';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrls: ['./app.scss'],
+  imports: [RouterOutlet, HeaderComponent, FooterComponent]
 })
-export class App {
-  protected readonly title = signal('StudentComplaintPortal');
-}
+export class AppComponent {}

@@ -1,0 +1,45 @@
+<div class="complaint-container">
+  <div class="card" [@slideIn]>
+    <h3>{{ isEdit ? 'Edit Complaint' : 'New Complaint' }}</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="form-group">
+        <label class="form-label" for="title">Title</label>
+        <input id="title" class="form-control" placeholder="Enter complaint title" formControlName="title" />
+        <div *ngIf="form.get('title')?.invalid && form.get('title')?.touched" class="error-message">
+          Title is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="date">Date</label>
+        <input id="date" type="date" class="form-control" formControlName="date" />
+        <div *ngIf="form.get('date')?.invalid && form.get('date')?.touched" class="error-message">
+          Date is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="category">Category</label>
+        <select id="category" class="form-select" formControlName="category">
+          <option value="">Select Category</option>
+          <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+        </select>
+        <div *ngIf="form.get('category')?.invalid && form.get('category')?.touched" class="error-message">
+          Category is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="description">Description</label>
+        <textarea id="description" class="form-control" rows="6" placeholder="Describe your complaint in detail (min 100 characters)" formControlName="description"></textarea>
+        <div *ngIf="form.get('description')?.invalid && form.get('description')?.touched" class="error-message">
+          Description is required and must be at least 100 characters long.
+        </div>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+        {{ isEdit ? 'Update Complaint' : 'Submit Complaint' }}
+      </button>
+    </form>
+  </div>
+</div>

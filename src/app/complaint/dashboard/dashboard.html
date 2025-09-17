@@ -1,0 +1,38 @@
+<div class="dashboard-container">
+  <div class="main-card" [@fadeIn]>
+    <h3>
+      Your Complaints
+      <a routerLink="/complaint/new" class="btn btn-success">+ New Complaint</a>
+    </h3>
+
+    <div class="complaints-list">
+      <div *ngIf="!(complaints$ | async)?.length" class="no-complaints">
+        <h5>No complaints found</h5>
+        <p>Create your first complaint to get started.</p>
+        <a routerLink="/complaint/new" class="btn btn-primary">Create Complaint</a>
+      </div>
+
+      <div *ngFor="let c of (complaints$ | async); let i = index" class="complaint-card" [@staggerList]>
+        <div class="complaint-header">
+          <div>
+            <h5 class="complaint-title">{{ c.title }}</h5>
+            <div class="complaint-meta">
+              <small>{{ c.date | date:'mediumDate' }}</small>
+              <small> • {{ c.category }}</small>
+              <span class="status-badge" [ngClass]="c.status">{{ c.status | titlecase }}</span>
+            </div>
+            <p class="complaint-description">{{ c.description }}</p>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-sm btn-outline-primary" (click)="edit(c.id!)">
+              Edit
+            </button>
+            <button class="btn btn-sm btn-outline-danger" (click)="delete(c.id!)">
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

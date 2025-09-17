@@ -1,0 +1,118 @@
+<div class="register-container">
+  <div class="card" [@fadeIn]>
+    <h3>Register for Student Complaint Portal</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row">
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="name">Name</label>
+            <input id="name" type="text" class="form-control" placeholder="Enter your full name" formControlName="name">
+            <div *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="error-message">
+              <div *ngIf="form.get('name')?.hasError('required')">Name is required</div>
+              <div *ngIf="form.get('name')?.hasError('pattern')">Name must contain only letters and spaces</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="srn">SRN</label>
+            <input id="srn" type="text" class="form-control" placeholder="Enter SRN (8 alphanumeric characters)" formControlName="srn">
+            <div *ngIf="form.get('srn')?.invalid && form.get('srn')?.touched" class="error-message">
+              <div *ngIf="form.get('srn')?.hasError('required')">SRN is required</div>
+              <div *ngIf="form.get('srn')?.hasError('pattern')">SRN must be exactly 8 alphanumeric characters</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input id="email" type="email" class="form-control" placeholder="Enter email (e.g., user@gmail.com)" formControlName="email">
+            <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-message">
+              <div *ngIf="form.get('email')?.hasError('required')">Email is required</div>
+              <div *ngIf="form.get('email')?.hasError('pattern')">Email must be a valid Gmail address</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone Number</label>
+            <input id="phone" type="tel" class="form-control" placeholder="Enter 10-digit phone number" formControlName="phone">
+            <div *ngIf="form.get('phone')?.invalid && form.get('phone')?.touched" class="error-message">
+              <div *ngIf="form.get('phone')?.hasError('required')">Phone number is required</div>
+              <div *ngIf="form.get('phone')?.hasError('pattern')">Phone must be 10 digits starting with 6-9</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="department">School/Department</label>
+            <select id="department" class="form-select" formControlName="department">
+              <option value="">Select Department</option>
+              <option *ngFor="let d of departments" [value]="d.name">{{ d.name }}</option>
+            </select>
+            <div *ngIf="form.get('department')?.invalid && form.get('department')?.touched" class="error-message">
+              Department is required
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="level">Level</label>
+            <select id="level" class="form-select" formControlName="level">
+              <option value="">Select Level</option>
+              <option value="UG">Undergraduate (UG)</option>
+              <option value="PG">Postgraduate (PG)</option>
+            </select>
+            <div *ngIf="form.get('level')?.invalid && form.get('level')?.touched" class="error-message">
+              Level is required
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="form-group">
+            <label class="form-label" for="course">Course</label>
+            <select id="course" class="form-select" formControlName="course">
+              <option value="">Select Course</option>
+              <option *ngFor="let c of filteredCourses" [value]="c">{{ c }}</option>
+            </select>
+            <div *ngIf="form.get('course')?.invalid && form.get('course')?.touched" class="error-message">
+              Course is required
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group position-relative">
+            <label class="form-label" for="password">Password</label>
+            <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="8-12 chars: A-Z, a-z, 0-9, !@#$%^&*" formControlName="password">
+            <button type="button" class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y me-2" (click)="showPassword = !showPassword" style="z-index: 10;" title="Toggle password visibility">
+              <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+            <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error-message">
+              <div *ngIf="form.get('password')?.hasError('required')">Password is required</div>
+              <div *ngIf="form.get('password')?.hasError('minlength')">Password must be at least 8 characters</div>
+              <div *ngIf="form.get('password')?.hasError('maxlength')">Password must be at most 50 characters</div>
+              <div *ngIf="form.get('password')?.errors?.['passwordRequirements']">
+                Password must include: uppercase, lowercase, digit, special char (!@#$%^&*)
+              </div>
+            </div>
+          </div>
+          <div class="password-strength mt-2">
+            <i class="fas fa-shield-alt me-1" [ngClass]="'text-' + (passwordStrength === 'Strong' ? 'success' : passwordStrength === 'Medium' ? 'warning' : 'danger')"></i>
+            Strength: <strong>{{ passwordStrength }}</strong> {{ passwordEmoji }}
+          </div>
+        </div>
+        <div class="col-12 mt-3">
+          <button class="btn btn-primary w-100" type="submit" [disabled]="form.invalid">
+            <i class="fas fa-user-plus me-1"></i>
+            Register
+          </button>
+          <p class="text-center mt-3">
+            Already have an account?
+            <!-- <a class="login-link" routerLink="/login" (click)="goToLogin($event)">Login Here</a> -->
+            <a class="login-link" routerLink="/login" (click)="goToLogin($event)">Login Here</a> 
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

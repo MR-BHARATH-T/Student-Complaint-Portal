@@ -1,0 +1,58 @@
+<div class="hero" [@fadeIn]>
+  <div class="card">
+    <div class="row">
+      <div class="col-12">
+        <div class="hero-section text-center mb-5">
+          <h2 class="display-4 fw-bold mb-3">Student Complaint Portal</h2>
+          <p class="lead">A secure and user-friendly platform for students to submit, track, and manage their complaints efficiently. Powered by Angular 20 and Firebase, with beautiful UI using Bootstrap and smooth animations.</p>
+          <!-- <div class="d-flex justify-content-center gap-3 mt-4">
+            <a routerLink="/register" class="btn btn-primary btn-lg">Get Started - Register</a>
+            <a routerLink="/login" class="btn btn-outline-primary btn-lg">Login</a>
+          </div> -->
+        </div>
+
+        <div class="row g-4 mb-5">
+          <div class="col-lg-4">
+            <div class="card h-100 border-0" style="box-shadow: var(--box-shadow);">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-user-plus fa-3x" style="color: var(--primary-color);" class="mb-3"></i>
+                <h5 class="card-title">Easy Registration & Login</h5>
+                <p class="card-text">Register with validated fields for name, SRN, email, phone, department, and course. Secure authentication with Firebase.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card h-100 border-0" style="box-shadow: var(--box-shadow);">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-edit fa-3x" style="color: var(--success-color);" class="mb-3"></i>
+                <h5 class="card-title">Submit Complaints</h5>
+                <p class="card-text">Post complaints with title, date picker, category (10 options like academics, infrastructure), and detailed description. Stored securely in Firebase.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="card h-100 border-0" style="box-shadow: var(--box-shadow);">
+              <div class="card-body text-center p-4">
+                <i class="fas fa-chart-line fa-3x" style="color: var(--info-color);" class="mb-3"></i>
+                <h5 class="card-title">Dashboard & Management</h5>
+                <p class="card-text">View, edit, and track your past complaints in a personal dashboard. Logout anytime to end session.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center">
+          <h3>Key Features</h3>
+          <p class="lead">Designed for seamless user experience with fixed header/footer, impactful GUI, and smooth transitions.</p>
+          <ul class="list-unstyled">
+            <li class="mb-2">Full validation on all forms (name characters, SRN alphanumeric 6 chars, Gmail only, phone 10 digits starting 6-9, password strength with emojis)</li>
+            <li class="mb-2">Nested dropdowns for department, level (UG/PG), and courses based on Indian education system</li>
+            <li class="mb-2">Firebase integration for user data and complaints storage/retrieval</li>
+            <li class="mb-2">Responsive design with Bootstrap, SCSS styling, and animations</li>
+            <li class="mb-2">Protected routes for logged-in users (dashboard, complaint submission)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="login-container">
+  <div class="card" [@fadeIn]>
+    <h3>Login to Your Account</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input id="email" type="email" class="form-control" placeholder="Enter your Gmail address" formControlName="email">
+            <div *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-message">
+              <div *ngIf="form.get('email')?.hasError('required')">Email is required</div>
+              <div *ngIf="form.get('email')?.hasError('pattern')">Email must be a valid Gmail address</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-12">
+          <div class="form-group position-relative">
+            <label class="form-label" for="password">Password</label>
+            <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-control" placeholder="Enter your password" formControlName="password">
+            <button type="button" class="btn btn-link p-0 position-absolute end-0 top-50 translate-middle-y me-2" (click)="showPassword = !showPassword" style="z-index: 10;" title="Toggle password visibility">
+              <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+            <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error-message">
+              <div *ngIf="form.get('password')?.hasError('required')">Password is required</div>
+              <div *ngIf="form.get('password')?.hasError('minlength')">Password must be at least 8 characters</div>
+              <div *ngIf="form.get('password')?.hasError('maxlength')">Password must be at most 12 characters</div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 mt-3">
+          <button class="btn btn-primary w-100" type="submit" [disabled]="form.invalid">
+            <i class="fas fa-sign-in-alt me-1"></i>
+            Sign In
+          </button>
+          <p class="text-center mt-3">
+            Don't have an account?
+            <a class="register-link" routerLink="/register" (click)="goToRegister($event)">Register Here</a>
+          </p>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,1 +1,114 @@
 /* You can add global styles to this file, and also import other style files */
+
+@import 'animate.css';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+/* Global CSS Variables */
+:root {
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --info-color: #06b6d4;
+  --light-color: #f8fafc;
+  --dark-color: #0f172a;
+  --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --glass-bg: rgba(99, 23, 23, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.8);
+  --border-radius: 12px;
+  --border-radius-lg: 20px;
+  --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  --box-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+  --transition: 180ms ease-in-out;
+  --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-base: 16px;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --spacing-xs: 0.25rem;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --primary-dark: #4f46e5;
+  --primary-light: #a78bfa;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition-duration: 180ms !important;
+  transition-delay: 0s !important;
+}
+
+body {
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  color: var(--dark-color);
+  background: var(--bg-gradient);
+}
+
+main.container {
+  padding-top: 96px !important; /* slightly larger than header height */
+  padding-bottom: 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-lg);
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--box-shadow);
+  min-height: calc(100vh - 160px) !important; /* leaves space for header+footer */
+}
+
+/* styles.scss — fixes for animation blocking visibility */
+
+/* 1) Prevent route animation from removing elements from document flow
+   (routeTransition queries :enter/:leave and sets absolute; this override
+   keeps elements in normal flow so the page height is stable).
+*/
+router-outlet, main.container {
+  /* ensure router children have visible flow while animations run */
+  > * {
+    position: static !important;     /* override absolute during animation */
+    opacity: 1 !important;
+    transform: none !important;
+    will-change: auto !important;
+  }
+}
+
+/* 3) Disable stagger visual delay for list items so they render immediately.
+   Targets elements that Angular anim attaches like [@staggerList] attribute.
+*/
+[\@staggerList], [\@routeTransition] {
+  /* remove staggered visibility so entry is immediate */
+  transition: none !important;
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* 4) Ensure components with animation triggers are visible immediately.
+   Angular applies attribute selectors like [@fadeIn] etc; we override
+   initial hidden state so content is usable while animation runs.
+*/
+[\@fadeIn], [\@slideIn], [\@routeTransition], [\@staggerList] {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* 5) Disable expensive filters/shadow on low-power devices */
+@media (prefers-reduced-motion: reduce), (max-width: 768px) {
+  .hero, .card, .navbar, .footer {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
