@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/StudentComplaintPortal/server/server.mjs",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "dist/StudentComplaintPortal/browser/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/.*",
+      "dest": "dist/StudentComplaintPortal/server/server.mjs"
+    }
+  ]
+}

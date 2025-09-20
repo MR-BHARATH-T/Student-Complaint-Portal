@@ -1,16 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/complaint/complaint.component.ts
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { FirebaseService } from '../services/firebase.service';
 import { ComplaintService } from '../services/complaint.service';
 import { AuthService } from '../services/auth.service';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { User } from 'firebase/auth';
 import { ComplaintModel } from '../models/complaint.model';
 import { firstValueFrom } from 'rxjs';
 import { slideIn } from '../animations';
 
-// Material imports
+// Angular Material imports
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
@@ -39,15 +40,16 @@ import { MatNativeDateModule } from '@angular/material/core';
   animations: [slideIn]
 })
 export class ComplaintComponent implements OnInit {
-  categories = ['Academics', 'Infrastructure', 'Faculty', 'Administration', 'Hostel', 'Library', 'Sports', 'Canteen', 'Transport', 'Others'];
+  categories = [
+    'Academics', 'Infrastructure', 'Faculty', 'Administration',
+    'Hostel', 'Library', 'Sports', 'Canteen', 'Transport', 'Others'
+  ];
 
   form!: FormGroup;
-
   isEdit = false;
   id: string | null = null;
   uid: string | null = null;
-
-  existingStatus: string = 'pending';
+  existingStatus: string = 'Post Submitted';
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +57,8 @@ export class ComplaintComponent implements OnInit {
     private complaintService: ComplaintService,
     private auth: AuthService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit() {
@@ -68,6 +71,7 @@ export class ComplaintComponent implements OnInit {
     });
 
     this.id = this.route.snapshot.paramMap.get('id');
+
     this.auth.user$.subscribe(async (u: User | null) => {
       if (u) {
         this.uid = u.uid;
@@ -101,7 +105,9 @@ export class ComplaintComponent implements OnInit {
 
     const user = await firstValueFrom(this.auth.user$);
     if (!user) {
-      alert('You must be logged in to submit a complaint.');
+      if (isPlatformBrowser(this.platformId)) {
+        alert('You must be logged in to submit a complaint.');
+      }
       this.router.navigate(['/login']);
       return;
     }
@@ -124,7 +130,9 @@ export class ComplaintComponent implements OnInit {
       this.router.navigate(['/dashboard']);
     } catch (err: any) {
       console.error(err);
-      alert(`Failed to save complaint: ${err.message || err.code || 'Unknown error'}`);
+      if (isPlatformBrowser(this.platformId)) {
+        alert(`Failed to save complaint: ${err.message || err.code || 'Unknown error'}`);
+      }
     }
   }
 }

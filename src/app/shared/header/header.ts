@@ -1,47 +1,80 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/shared/header/header.component.ts
+import { Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { Observable } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 import { FirebaseService } from '../../services/firebase.service';
-import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { User } from 'firebase/auth';
-
-// Material imports
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
+import { UserModel } from '../../models/user.model';
 
 @Component({
   selector: 'app-header',
   standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './header.html',
-  styleUrls: ['./header.scss'],
-  imports: [CommonModule, RouterModule, MatToolbarModule, MatButtonModule, MatIconModule, MatMenuModule],
+  styleUrls: ['./header.scss']
 })
 export class HeaderComponent implements OnInit {
-  userName: string | null = null;
-  user$: Observable<User | null>;
+  user$!: Observable<User | null>;
+  public userName: string = ''; // default
 
-  constructor(public auth: AuthService, private router: Router, private fbService: FirebaseService) {
-    this.user$ = this.auth.user$;
-  }
+  theme: string = 'light'; // SSR-safe theme support
+
+  constructor(
+    public auth: AuthService,
+    private fbService: FirebaseService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
-    // Subscribe to auth state changes
-    this.auth.user$.subscribe(async (user: User | null) => {
-      if (user?.uid) {
-        // Use FirebaseService to get user document
-        const userData = await this.fbService.getUser(user.uid);
-        this.userName = userData?.name || null;
+    // SSR-safe theme restore
+    if (isPlatformBrowser(this.platformId)) {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme) {
+        this.theme = savedTheme;
+        document.body.classList.add(this.theme);
+      }
+    }
+
+    // Subscribe to auth.user$
+    this.auth.user$.subscribe(async (user) => {
+      if (user) {
+        try {
+          const userModel: UserModel | null = await this.fbService.getUser(user.uid);
+          this.userName = userModel?.name || user.displayName || 'User';
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          this.userName = user.displayName || 'User';
+        }
       } else {
-        this.userName = null;
+        this.userName = '';
       }
     });
   }
 
+  toggleTheme() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.theme = this.theme === 'light' ? 'dark' : 'light';
+      document.body.className = '';
+      document.body.classList.add(this.theme);
+      localStorage.setItem('theme', this.theme);
+    }
+  }
+
   async logout() {
+    if (isPlatformBrowser(this.platformId)) {
+      const confirmed = confirm('Do you want to logout?');
+      if (!confirmed) return;
+    }
+
     await this.auth.logout();
+
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('userToken');
+    }
+
     this.router.navigate(['/home']);
   }
 

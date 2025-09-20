@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/auth/login/login.component.ts
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { fadeIn } from '../../animations';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { fadeInOut } from '../../animations';
 
 @Component({
   selector: 'app-login',
@@ -11,13 +12,20 @@ import { fadeIn } from '../../animations';
   templateUrl: './login.html',
   styleUrls: ['./login.scss'],
   imports: [CommonModule, ReactiveFormsModule],
-  animations: [fadeIn]
+  animations: [fadeInOut]
 })
 export class LoginComponent implements OnInit {
   form!: FormGroup;
   showPassword = false;
+  errorMessage: string | null = null;
+  private errorTimeout: any;
 
-  constructor(private fb: FormBuilder, private auth: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private auth: AuthService,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit() {
     this.form = this.fb.group({
@@ -25,7 +33,7 @@ export class LoginComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(50)]]
     });
 
-    // If already logged in, navigate to dashboard
+    // Auto-redirect if already logged in
     this.auth.user$.subscribe(user => {
       if (user) {
         this.router.navigate(['/dashboard']);
@@ -34,29 +42,37 @@ export class LoginComponent implements OnInit {
   }
 
   async submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
-    try {
-      await this.auth.login(this.form.value.email, this.form.value.password);
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+
+    // Reset previous error + timer
+    this.errorMessage = null;
+    if (isPlatformBrowser(this.platformId)) {
+      clearTimeout(this.errorTimeout);
+    }
+
+    const { email, password } = this.form.value;
+    const result = await this.auth.login(email, password);
+
+    if (result.success) {
       this.router.navigate(['/dashboard']);
-    } catch (err: any) {
-      console.error(err);
-      let message = 'Login failed';
-      if (err.code === 'auth/invalid-credential') {
-        message = 'Invalid email or password';
-      } else if (err.code === 'auth/user-not-found') {
-        message = 'User not found. Please register first.';
-      } else if (err.code === 'auth/wrong-password') {
-        message = 'Wrong password';
-      } else if (err.code === 'auth/invalid-email') {
-        message = 'Invalid email format';
+    } else {
+      this.errorMessage = result.message;
+
+      if (isPlatformBrowser(this.platformId)) {
+        // Auto fade-out after 3s (browser only)
+        this.errorTimeout = setTimeout(() => {
+          this.errorMessage = null;
+        }, 3000);
       }
-      alert(message);
     }
   }
 
   goToRegister(event: Event) {
-    if (event) {
-      event.preventDefault(); // prevent page reload
+    if (isPlatformBrowser(this.platformId) && event) {
+      event.preventDefault();
     }
     this.router.navigate(['/register']);
   }

@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { Firestore, doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc, deleteDoc, serverTimestamp, DocumentReference, CollectionReference, query } from '@angular/fire/firestore';
+import { Firestore, doc, setDoc, getDoc, collection, addDoc, getDocs, updateDoc, deleteDoc, serverTimestamp, DocumentReference, CollectionReference, query, where } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { UserModel } from '../models/user.model';
 import { ComplaintModel } from '../models/complaint.model';
@@ -20,6 +20,27 @@ export class FirebaseService {
     const userRef: DocumentReference = doc(this.db, 'users', uid);
     const snap = await getDoc(userRef);
     return snap.exists() ? { ...snap.data() as UserModel, uid } : null;
+  }
+
+  async checkEmailExists(email: string): Promise<boolean> {
+    const usersRef = collection(this.db, 'users');
+    const q = query(usersRef, where('email', '==', email));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
+  }
+
+  async srnExists(srn: string): Promise<boolean> {
+    const usersRef = collection(this.db, 'users');
+    const q = query(usersRef, where('srn', '==', srn));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
+  }
+
+  async phoneExists(phone: string): Promise<boolean> {
+    const usersRef = collection(this.db, 'users');
+    const q = query(usersRef, where('phone', '==', phone));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
   }
 
   // Complaints

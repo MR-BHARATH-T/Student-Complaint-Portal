@@ -18,9 +18,11 @@
     transition: var(--transition);
     text-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
     letter-spacing: -0.025em;
+    cursor: pointer;
     &:hover {
       color: var(--primary-light) !important;
       transform: scale(1.05);
+      cursor: pointer;
       text-shadow: 0 4px 8px rgba(99, 102, 241, 0.4);
     }
   }
